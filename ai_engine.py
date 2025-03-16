@@ -82,3 +82,44 @@ def generate_ai_social_calendar(niche, plan_type, competitor_analysis=True, rege
     content_calendar = response["choices"][0]["message"]["content"]
 
     return content_calendar
+def generate_ai_social_calendar(business_name, industry, subscription):
+    """
+    🚀 AI-Generated Social Media Strategy:
+    - AI must create content that solves **audience pain points**.
+    - AI must use the latest **social media engagement trends**.
+    - AI should include **both short-form & long-form content**.
+    - AI must integrate **video post ideas** into every calendar.
+    - AI should optimize **posting times & engagement strategies**.
+    """
+
+    content_plan = []
+
+    if subscription == "Free":
+        content_plan.append("📌 Monday: Story-based engagement post")
+        content_plan.append("📌 Wednesday: Quote graphic (Brand 
+Identity)")
+        content_plan.append("📌 Friday: 'Behind-the-Scenes' short-form 
+video")
+        return content_plan
+
+    elif subscription == "Pro":
+        content_plan.append("📌 Monday: Brand storytelling post")
+        content_plan.append("📌 Tuesday: AI-generated infographic 
+(Industry Insights)")
+        content_plan.append("📌 Thursday: AI-written LinkedIn post 
+(Thought Leadership)")
+        content_plan.append("📌 Friday: Instagram Reel (Trend-Based)")
+        return content_plan
+
+    elif subscription == "Premium":
+        content_plan.append("📌 Monday: AI-Generated Customer Testimonial 
+Video")
+        content_plan.append("📌 Wednesday: Live Q&A Session (AI Recommends 
+Topics)")
+        content_plan.append("📌 Friday: AI-Optimized Paid Ad Campaign 
+(Social & Google)")
+        content_plan.append("📌 Sunday: Personal Branding Blog Post 
+(SEO-Optimized)")
+        return content_plan
+
+    return ["⚠️ Invalid Subscription Level"]
