@@ -1,0 +1,7 @@
+openai
+flask
+requests
+stripe
+sendgrid
+gunicorn
+pyairtable
