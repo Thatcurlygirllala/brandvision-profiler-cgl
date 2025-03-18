@@ -6,3 +6,4 @@ sendgrid
 gunicorn
 pyairtable
 pip==25.0.1
+pyairtable
