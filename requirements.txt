@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 annotated-types==0.7.0
 anyio==4.9.0
 blinker==1.9.0
@@ -34,3 +35,14 @@ typing_extensions==4.12.2
 urllib3==2.3.0
 Werkzeug==3.1.3
 zipp==3.21.0
+=======
+openai
+flask
+requests
+stripe
+sendgrid
+gunicorn
+pyairtable
+pip==25.0.1
+python-dotenv
+>>>>>>> 8d5283f088c51579bbd4b922a1cd6bb4df254db2
