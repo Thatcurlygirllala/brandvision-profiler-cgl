@@ -144,3 +144,22 @@ def store_ai_report(report_id, client_name, report_type, ai_report_content, gene
         print(f"✅ AI Report stored successfully for {client_name}")
     except Exception as e:
         print(f"❌ ERROR: Failed to store AI Report - {str(e)}")
+from pyairtable import Api
+
+# Airtable API Configuration
+AIRTABLE_API_KEY = "YOUR_AIRTABLE_API_KEY"
+BASE_ID = "app4XhsFd5eKT76QK"
+
+def store_ai_report(client_id, report_url):
+    """
+    Saves AI-generated branding reports in Airtable.
+    """
+    table = Api(AIRTABLE_API_KEY).table(BASE_ID, "AI Reports")
+    
+    record = {
+        "Client ID": client_id,
+        "Report URL": report_url,
+        "Generated Date": str(datetime.date.today())
+    }
+
+    table.create(record)
