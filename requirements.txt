@@ -1,6 +1,0 @@
-Flask
-gunicorn
-openai
-fpdf
-requests
-python-dotenv
