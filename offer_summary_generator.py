@@ -1,8 +1,8 @@
-
 # === Offer Summary Generator: Unified 19-Star Version ===
 
 import os
-from openai import OpenAI
+import openai
+
 from dotenv import load_dotenv
 from fpdf import FPDF
 from datetime import datetime
@@ -19,7 +19,8 @@ table_name = os.getenv("OFFER_GENERATOR_TABLE")
 email_address = os.getenv("EMAIL_ADDRESS")
 email_password = os.getenv("EMAIL_APP_PASSWORD")
 
-client = OpenAI(api_key=api_key)
+# === Set OpenAI API key ===
+openai.api_key = api_key
 
 # === AI Offer Generator ===
 def generate_offer_summary(title, offer_type, description):
@@ -42,11 +43,11 @@ Include:
 8. Instant Upgrade Offer (Power Bundle or Strategy Call)
 """
 
-    response = client.chat.completions.create(
+    response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[{"role": "user", "content": prompt}]
     )
-    return response.choices[0].message.content.strip()
+    return response["choices"][0]["message"]["content"].strip()
 
 # === PDF Generator ===
 def create_offer_pdf(title, offer_type, description, summary):
@@ -129,7 +130,7 @@ def run_offer_summary(title, offer_type, description, user_email="demo@brandvisi
     send_offer_email(user_email, f"Your Offer Summary: {title}", "See your AI-generated offer summary attached.", pdf_file)
     print(f"✅ Offer Summary generated and emailed.")
 
-# === Test Run ===
+# === Test Run (Optional) ===
 if __name__ == "__main__":
     run_offer_summary(
         title="Emotional Marketing Mastery",
