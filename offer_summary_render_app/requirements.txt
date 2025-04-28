@@ -4,6 +4,3 @@ openai
 fpdf
 requests
 python-dotenv
-pyairtable
-stripe
-pdfkit

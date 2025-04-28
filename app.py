@@ -9,16 +9,13 @@ import pdfkit
 # Load environment variables
 load_dotenv()
 
-# Initialize Flask app once
 app = Flask(__name__)
 
-# Load API keys from .env
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 AIRTABLE_API_KEY = os.getenv("AIRTABLE_API_KEY")
 BASE_ID = os.getenv("AIRTABLE_BASE_ID")
 TABLE_NAME = os.getenv("AIRTABLE_TABLE_NAME")
 
-# Airtable table (for branding reports)
 table = Table(AIRTABLE_API_KEY, BASE_ID, TABLE_NAME)
 openai.api_key = OPENAI_API_KEY
 
@@ -212,8 +209,7 @@ def generate_blueprint():
 
     return render_template("blueprint_result.html", html_output=html_output, pdf_url='/' + output_path)
 
-# === Run the Flask App ===
-# === Offer Summary Intake Route ===
+# === New Offer Summary Intake Route (for Tally integration) ===
 from offer_summary_generator import run_offer_summary as run_offer_summary_logic
 
 @app.route("/run-offer-summary", methods=["POST"])
@@ -239,5 +235,7 @@ def offer_summary_webhook():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# === Run the Flask App ===
 if __name__ == "__main__":
     app.run(debug=True)
