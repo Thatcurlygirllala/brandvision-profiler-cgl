@@ -9,19 +9,18 @@ import pdfkit
 # Load environment variables
 load_dotenv()
 
+# Initialize app
 app = Flask(__name__)
 
-# Load API Keys
+# Load API keys
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 AIRTABLE_API_KEY = os.getenv("AIRTABLE_API_KEY")
 AIRTABLE_BASE_ID = os.getenv("AIRTABLE_BASE_ID")
-TABLE_NAME = os.getenv("AIRTABLE_TABLE_NAME")
 
-# Setup Airtable Connection
-base = Base(AIRTABLE_API_KEY, AIRTABLE_BASE_ID)
-table = base.table(TABLE_NAME)
+# Connect to Airtable Base
+airtable_base = Base(AIRTABLE_API_KEY, AIRTABLE_BASE_ID)
 
-# Setup OpenAI Connection
+# Set OpenAI key
 openai.api_key = OPENAI_API_KEY
 
 # === Blueprint Routes ===
@@ -47,6 +46,7 @@ def generate_branding_report():
     )
     report_content = response["choices"][0]["message"]["content"]
 
+    table = airtable_base.table("AI Reports Table")
     record = table.create({
         "Client Name": client_name,
         "Business Type": business_type,
@@ -171,7 +171,7 @@ def generate_timeline():
     html_output = generate_launch_timeline(plan_length=plan_length, client_name=client_name)
     return jsonify({"html": html_output})
 
-# === Swipe Copy Route ===
+# === Swipe Copy Generator Route ===
 from swipe_copy_generator import generate_swipe_copy, log_swipe_copy_to_airtable
 
 @app.route('/generate_swipe_copy', methods=['POST'])
@@ -214,7 +214,7 @@ def generate_blueprint():
 
     return render_template("blueprint_result.html", html_output=html_output, pdf_url='/' + output_path)
 
-# === New Offer Summary Intake Route (for Tally integration) ===
+# === Offer Summary Intake Route for Tally/Make ===
 from offer_summary_generator import run_offer_summary as run_offer_summary_logic
 
 @app.route("/run-offer-summary", methods=["POST"])
