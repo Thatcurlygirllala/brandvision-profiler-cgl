@@ -19,6 +19,7 @@ AIRTABLE_BASE_ID = os.getenv("AIRTABLE_BASE_ID")
 
 # Connect to Airtable Base
 airtable_base = Base(AIRTABLE_API_KEY, AIRTABLE_BASE_ID)
+table = airtable_base.table("tbl18MATAmibVszwr")  # ✅ FIX: Connect table here
 
 # Set OpenAI key
 openai.api_key = OPENAI_API_KEY
@@ -46,7 +47,6 @@ def generate_branding_report():
     )
     report_content = response["choices"][0]["message"]["content"]
 
-    table = airtable_base.table("AI Reports Table")
     record = table.create({
         "Client Name": client_name,
         "Business Type": business_type,
