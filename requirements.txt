@@ -29,4 +29,4 @@ pyairtable==2.1.0
 python-dotenv==1.0.1
 pdfkit==1.0.0
 pytrends==4.9.2
-openai==1.23.2
+openai==0.28.1
