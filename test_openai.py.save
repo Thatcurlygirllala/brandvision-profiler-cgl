@@ -1,0 +1,9 @@
+import openai
+
+openai.api_key = "sk-proj-xxxxxxx"  # Replace with your real API key
+
+response = openai.ChatCompletion.create(
+    model="gpt-4",
+    messages=[{"role": "user", "content": "Say hello"}]
+)
+

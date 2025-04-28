@@ -1,0 +1,7 @@
+
+    Table: NicheInsights
+    - Niche: Single line text
+    - TrendingTopics: Long text
+    - EmotionalThemes: Long text
+    - RecommendedContentTypes: Long text
+    

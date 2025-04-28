@@ -1,0 +1,7 @@
+
+    Table: LaunchForecast
+    - User: Single line text
+    - SuggestedLaunchDate: Date
+    - ConfidenceLevel: Single select [Low, Medium, High]
+    - Reasoning: Long text
+    

@@ -1,0 +1,7 @@
+
+    Table: FixMyPost
+    - User: Single line text
+    - OriginalText: Long text
+    - AI_Rewrite_and_Notes: Long text
+    - ReviewedAt: Date
+    

@@ -1,0 +1,6 @@
+
+    Table: CreatorTypes
+    - User: Single line text
+    - TypeSelected: Single select [Writer, Speaker, Visual Creator]
+    - AI_Adapted_Suggestions: Long text
+    

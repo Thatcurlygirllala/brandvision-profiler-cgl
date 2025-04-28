@@ -1,4 +1,35 @@
-import openai
+from fpdf import FPDF
+from datetime import datetime
+from airtable_connector import save_to_airtable
+
+def run_social_calendar(business_name, industry, subscription, user_email):
+    calendar = generate_ai_social_calendar(business_name, industry, subscription)
+
+    filename = f"social_calendar_{business_name.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", "B", 14)
+    pdf.cell(0, 10, "BrandVision Profiler: AI Social Calendar", ln=True, align="C")
+    pdf.set_font("Arial", "", 12)
+    pdf.cell(0, 10, f"Business: {business_name} | Industry: {industry}", ln=True)
+    pdf.ln(10)
+
+    for post in calendar:
+        pdf.multi_cell(0, 10, post)
+
+    pdf.output(filename)
+    print(f"PDF Saved: {filename}")
+
+    # Save to Airtable
+    save_to_airtable("Social Media Strategy", {
+        "User Email": user_email,
+        "Business Name": business_name,
+        "Industry": industry,
+        "Plan": subscription,
+        "PDF Filename": filename,
+        "Date": datetime.now().isoformat()
+    return content_calendar
 
 ai_role = """
 You are an AI-powered Branding & Social Media Marketing expert. Your expertise includes:
@@ -96,30 +127,65 @@ def generate_ai_social_calendar(business_name, industry, subscription):
 
     if subscription == "Free":
         content_plan.append("📌 Monday: Story-based engagement post")
-        content_plan.append("📌 Wednesday: Quote graphic (Brand 
-Identity)")
-        content_plan.append("📌 Friday: 'Behind-the-Scenes' short-form 
-video")
+        content_plan.append("📌 Wednesday: Quote graphic (Brand Identity)")
+        content_plan.append("📌 Friday: 'Behind-the-Scenes' short-form video")
         return content_plan
 
     elif subscription == "Pro":
         content_plan.append("📌 Monday: Brand storytelling post")
-        content_plan.append("📌 Tuesday: AI-generated infographic 
-(Industry Insights)")
-        content_plan.append("📌 Thursday: AI-written LinkedIn post 
-(Thought Leadership)")
+        content_plan.append("📌 Tuesday: AI-generated infographic (Industry Insights)")
+        content_plan.append("📌 Thursday: AI-written LinkedIn post (Thought Leadership)")
         content_plan.append("📌 Friday: Instagram Reel (Trend-Based)")
         return content_plan
 
     elif subscription == "Premium":
-        content_plan.append("📌 Monday: AI-Generated Customer Testimonial 
-Video")
-        content_plan.append("📌 Wednesday: Live Q&A Session (AI Recommends 
-Topics)")
-        content_plan.append("📌 Friday: AI-Optimized Paid Ad Campaign 
-(Social & Google)")
-        content_plan.append("📌 Sunday: Personal Branding Blog Post 
-(SEO-Optimized)")
+        content_plan.append("📌 Monday: AI-Generated Customer Testimonial Video")
+        content_plan.append("📌 Wednesday: Live Q&A Session (AI Recommends Topics)")
+        content_plan.append("📌 Friday: AI-Optimized Paid Ad Campaign (Social & Google)")
+        content_plan.append("📌 Sunday: Personal Branding Blog Post (SEO-Optimized)")
         return content_plan
 
     return ["⚠️ Invalid Subscription Level"]
+def run_social_calendar(business_name, industry, subscription, user_email):
+    calendar = generate_ai_social_calendar(business_name, industry, subscription)
+from fpdf import FPDF
+from datetime import datetime
+from airtable_connector import save_to_airtable
+
+def run_social_calendar(business_name, industry, subscription, user_email):
+    calendar = generate_ai_social_calendar(business_name, industry, subscription)
+
+    filename = f"social_calendar_{business_name.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", "B", 14)
+    pdf.cell(0, 10, "BrandVision Profiler: AI Social Calendar", ln=True, align="C")
+    pdf.set_font("Arial", "", 12)
+    pdf.cell(0, 10, f"Business: {business_name} | Industry: {industry}", ln=True)
+    pdf.ln(10)
+
+    for post in calendar:
+        pdf.multi_cell(0, 10, post)
+
+    pdf.output(filename)
+    print(f"PDF Saved: {filename}")
+
+    # Save to Airtable
+    save_to_airtable("Social Media Strategy", {
+        "User Email": user_email,
+        "Business Name": business_name,
+        "Industry": industry,
+        "Plan": subscription,
+        "PDF Filename": filename,
+        "Date": datetime.now().isoformat()
+    })
+if __name__ == "__main__":
+    run_social_calendar(
+        business_name="CGL Coaching",
+        industry="personal branding",
+        subscription="Pro",
+        user_email="demo@brandvision.com"
+    )
+
+   

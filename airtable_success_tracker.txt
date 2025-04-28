@@ -1,0 +1,7 @@
+
+    Table: SuccessTracker
+    - User: Single line text
+    - ToolUsed: Single select
+    - DateCompleted: Date
+    - SuggestedNextStep: Long text
+    

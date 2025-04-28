@@ -1,0 +1,1 @@
+# Fix My Post script placeholder - AI diagnoses tone, CTA, and clarity issues in user content.
