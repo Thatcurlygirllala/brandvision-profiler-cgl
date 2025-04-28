@@ -2,7 +2,7 @@ import os
 import openai
 import datetime
 from flask import Flask, request, jsonify, render_template, send_file
-from pyairtable import Table
+from pyairtable import Base
 from dotenv import load_dotenv
 import pdfkit
 
@@ -11,12 +11,17 @@ load_dotenv()
 
 app = Flask(__name__)
 
+# Load API Keys
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 AIRTABLE_API_KEY = os.getenv("AIRTABLE_API_KEY")
-BASE_ID = os.getenv("AIRTABLE_BASE_ID")
+AIRTABLE_BASE_ID = os.getenv("AIRTABLE_BASE_ID")
 TABLE_NAME = os.getenv("AIRTABLE_TABLE_NAME")
 
-table = Table(AIRTABLE_API_KEY, BASE_ID, TABLE_NAME)
+# Setup Airtable Connection
+base = Base(AIRTABLE_API_KEY, AIRTABLE_BASE_ID)
+table = base.table(TABLE_NAME)
+
+# Setup OpenAI Connection
 openai.api_key = OPENAI_API_KEY
 
 # === Blueprint Routes ===
