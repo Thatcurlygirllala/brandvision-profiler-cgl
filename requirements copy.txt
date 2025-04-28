@@ -1,0 +1,10 @@
+Flask
+gunicorn
+openai
+fpdf
+requests
+python-dotenv
+pyairtable
+stripe
+pdfkit
+pytrends
