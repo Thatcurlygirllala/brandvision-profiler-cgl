@@ -3,7 +3,7 @@
 from flask import Flask, request, jsonify, send_file
 import openai
 import stripe
-import airtable
+from pyairtable import Table
 import calendly
 import pdfkit
 import os
