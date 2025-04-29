@@ -85,7 +85,7 @@ def create_trend_insight_pdf(keyword, insights, emotion_result):
     pdf.output(filename)
     return filename
 
-def run_trend_insights(keyword, platform="multi"):
+def generate_trendsync_insights(keyword, platform="multi"):
     ai_insights = generate_trend_insights(keyword, platform)
     emotion_result = analyze_emotional_tone(ai_insights)
     filename = create_trend_insight_pdf(keyword, ai_insights, emotion_result)
