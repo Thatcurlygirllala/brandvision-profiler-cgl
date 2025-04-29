@@ -1,6 +1,7 @@
 # === BrandVision Profiler - Final Launch Version app.py (Fixed) ===
 
 from flask import Flask, request, jsonify
+from trendsync_engine import generate_trend_insights
 import os
 
 # === Load Environment Variables ===
@@ -89,15 +90,21 @@ def run_reddit_scanner_route():
     })
 
 @app.route('/run-trendsync', methods=['POST'])
-def run_trendsync_route():
+def run_trendsync():
     if not check_authorization(request):
         return jsonify({"error": "Unauthorized"}), 401
+
     data = request.get_json()
-    keyword = data.get("keyword", "default keyword")
-    run_trend_insights(keyword)
+    keyword = data.get("keyword", "brand strategy")
+    platform = data.get("platform", "multi")
+
+    result = generate_trend_insights(keyword, platform)
+
     return jsonify({
         "status": "success",
-        "message": f"TrendSync insights report generated for keyword: {keyword}"
+        "keyword": keyword,
+        "platform": platform,
+        "insight": result
     })
 
 @app.route('/run-vip-bulk', methods=['POST'])
