@@ -22,7 +22,11 @@ jwt = JWTManager(app)
 # API Keys
 openai.api_key = os.getenv("OPENAI_API_KEY")
 stripe.api_key = os.getenv("STRIPE_API_KEY")
-airtable_client = airtable.AirtableClient(os.getenv("AIRTABLE_API_KEY"))
+airtable_client = Table(
+    os.getenv("AIRTABLE_API_KEY"),
+    os.getenv("AIRTABLE_BASE_ID"),
+    os.getenv("AIRTABLE_TABLE_NAME")
+)
 calendly_api = calendly.Calendly(os.getenv("CALENDLY_API_KEY"))
 sendgrid_api_key = os.getenv("SENDGRID_API_KEY")  # For AI-Powered Email Summaries
 
