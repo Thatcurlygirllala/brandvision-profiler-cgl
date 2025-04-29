@@ -1,246 +1,119 @@
-import os
-import openai
-import datetime
-from flask import Flask, request, jsonify, render_template, send_file
-from pyairtable import Base
-from dotenv import load_dotenv
-import pdfkit
+# === BrandVision Profiler - Final Launch Version app.py ===
 
-# Load environment variables
+from flask import Flask, request, jsonify
+import os
+
+# === Load Environment Variables ===
+from dotenv import load_dotenv
 load_dotenv()
 
-# Initialize app
+# === Initialize Flask app ===
 app = Flask(__name__)
 
-# Load API keys
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-AIRTABLE_API_KEY = os.getenv("AIRTABLE_API_KEY")
-AIRTABLE_BASE_ID = os.getenv("AIRTABLE_BASE_ID")
+# === Load Secret Key ===
+SECRET_KEY = os.getenv("SECRET_KEY", "BrandVision_!2025_SuperSecure_Key_XYZ4729")
 
-# Connect to Airtable Base
-airtable_base = Base(AIRTABLE_API_KEY, AIRTABLE_BASE_ID)
-table = airtable_base.table("tbl18MATAmibVszwr")  # ✅ FIX: Connect table here
+# === Authorization Check ===
+def check_authorization(request):
+    auth_header = request.headers.get('Authorization')
+    if auth_header != SECRET_KEY:
+        return False
+    return True
 
-# Set OpenAI key
-openai.api_key = OPENAI_API_KEY
+# === Import Feature Scripts ===
+from offer_summary import generate_offer_summary
+from audience_to_income import create_audience_to_income
+from quick_launch_ai import generate_quick_launch
+from swipe_copy_generator import generate_swipe_copy
+from emotion_engine import generate_emotion_report
+from reddit_scanner import generate_reddit_report
+from trendsync_engine import generate_trendsync_insights
+from vip_bulk_report import generate_vip_bulk_reports
+from brand_tracker import generate_monthly_pulse_report
+from affiliate_tracking import register_affiliate
 
-# === Blueprint Routes ===
-from quick_launch_ai import quick_launch_ai
-app.register_blueprint(quick_launch_ai)
+# === App Routes ===
 
-# === Branding Report Route ===
-@app.route("/generate-branding-report", methods=["POST"])
-def generate_branding_report():
-    data = request.json
-    client_name = data.get("client_name", "Brand Owner")
-    business_type = data.get("business_type", "Business")
-    industry = data.get("industry", "Industry")
-
-    prompt = f"""
-    You are a world-class branding strategist. Generate a Branding Report for {client_name}, a {business_type} in the {industry} industry.
-    Include: USP, Positioning, Competitor Analysis, Social Media Plan, Content Ideas, Paid Ad Copy.
-    """
-
-    response = openai.ChatCompletion.create(
-        model="gpt-4-turbo",
-        messages=[{"role": "system", "content": prompt}]
-    )
-    report_content = response["choices"][0]["message"]["content"]
-
-    record = table.create({
-        "Client Name": client_name,
-        "Business Type": business_type,
-        "Industry": industry,
-        "Report Content": report_content,
-        "Generated Date": str(datetime.datetime.now())
-    })
-
-    return jsonify({
-        "message": "Branding report generated!",
-        "branding_report": report_content,
-        "report_id": record['id']
-    })
-
-# === Social Calendar Route ===
-@app.route("/generate-social-calendar", methods=["POST"])
-def generate_social_calendar():
-    data = request.json
-    subscription_plan = data.get("subscription_plan", "Basic")
-    plan_map = {
-        "Basic": [
-            "📌 Monday: Story-based engagement post",
-            "📌 Wednesday: Quote post with CTA",
-            "📌 Friday: Behind-the-scenes Reel"
-        ],
-        "Pro": [
-            "📌 Monday: Blog summary",
-            "📌 Tuesday: Engagement post",
-            "📌 Thursday: LinkedIn post",
-            "📌 Friday: Trend Reel"
-        ],
-        "Premium": [
-            "📌 Monday: Testimonial video",
-            "📌 Wednesday: Paid ad copy",
-            "📌 Friday: Viral trend forecast",
-            "📌 Sunday: Blog post"
-        ]
-    }
-    return jsonify({
-        "message": "Social Calendar Generated",
-        "social_media_calendar": plan_map.get(subscription_plan, plan_map["Basic"])
-    })
-
-# === Competitor Analysis Route ===
-@app.route("/competitor-analysis", methods=["POST"])
-def competitor_analysis():
-    data = request.json
-    competitor_name = data.get("competitor_name", "Competitor Brand")
-    industry = data.get("industry", "Industry")
-
-    prompt = f"""
-    Analyze {competitor_name} in the {industry} industry.
-    Include: Strengths, Weaknesses, Social Media, Ads, Differentiators.
-    """
-
-    response = openai.ChatCompletion.create(
-        model="gpt-4-turbo",
-        messages=[{"role": "system", "content": prompt}]
-    )
-    competitor_report = response["choices"][0]["message"]["content"]
-
-    return jsonify({
-        "message": f"Analysis for {competitor_name}",
-        "competitor_analysis": competitor_report
-    })
-
-# === Ad Copy Generator ===
-@app.route("/generate-ad-copy", methods=["POST"])
-def generate_ad_copy():
-    data = request.json
-    product_name = data.get("product_name", "Brand Product")
-    industry = data.get("industry", "Industry")
-
-    prompt = f"""
-    Write short-form ad copy for {product_name} in {industry}.
-    Include: Facebook, Instagram, LinkedIn, Google.
-    """
-
-    response = openai.ChatCompletion.create(
-        model="gpt-4-turbo",
-        messages=[{"role": "system", "content": prompt}]
-    )
-    ad_copy = response["choices"][0]["message"]["content"]
-
-    return jsonify({
-        "message": "Ad Copy Generated",
-        "ad_copy": ad_copy
-    })
-
-# === SWOT Analysis ===
-@app.route("/generate-swot-analysis", methods=["POST"])
-def generate_swot_analysis():
-    data = request.json
-    business_name = data.get("business_name", "Brand")
-    industry = data.get("industry", "Industry")
-
-    prompt = f"""
-    Generate a SWOT for {business_name} in {industry}.
-    Include: Strengths, Weaknesses, Opportunities, Threats, Recommendations.
-    """
-
-    response = openai.ChatCompletion.create(
-        model="gpt-4-turbo",
-        messages=[{"role": "system", "content": prompt}]
-    )
-    swot_report = response["choices"][0]["message"]["content"]
-
-    return jsonify({
-        "message": "SWOT Analysis Generated",
-        "swot_analysis": swot_report
-    })
-
-# === Launch Timeline Route ===
-from launch_timeline import generate_launch_timeline
-
-@app.route('/generate_timeline', methods=['POST'])
-def generate_timeline():
+@app.route('/run-offer-summary', methods=['POST'])
+def run_offer_summary():
+    if not check_authorization(request):
+        return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
-    plan_length = int(data.get('plan_length', 7))
-    client_name = data.get('client_name', 'BrandVision User')
-
-    html_output = generate_launch_timeline(plan_length=plan_length, client_name=client_name)
-    return jsonify({"html": html_output})
-
-# === Swipe Copy Generator Route ===
-from swipe_copy_generator import generate_swipe_copy, log_swipe_copy_to_airtable
-
-@app.route('/generate_swipe_copy', methods=['POST'])
-def generate_swipe_copy_route():
-    data = request.get_json()
-    user = data.get("user_name", "Guest User")
-    niche = data.get("niche", "coaching")
-    audience = data.get("audience", "women entrepreneurs")
-    offer = data.get("offer", "signature program")
-    emotion = data.get("emotion_tone", "empowering")
-    plan = data.get("plan_tier", "free")
-
-    result = generate_swipe_copy(niche, audience, offer, emotion, plan)
-    log_swipe_copy_to_airtable(user, niche, audience, offer, emotion, plan, result)
-
+    result = generate_offer_summary(data)
     return jsonify(result)
 
-# === Offer Blueprint Generator Route ===
-from offer_matchmaker import generate_offer_blueprint
+@app.route('/run-audience-blueprint', methods=['POST'])
+def run_audience_blueprint():
+    if not check_authorization(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    result = create_audience_to_income(data)
+    return jsonify(result)
 
-@app.route('/generate_blueprint', methods=['POST'])
-def generate_blueprint():
-    user_path = request.form.get('user_path')
-    client_type = request.form.get('client_type')
-    audience_type = request.form.get('audience_type')
-    emotion_summary = request.form.get('emotion_summary')
-    content_topics = request.form.get('content_topics')
-    inquiry_summary = request.form.get('inquiry_summary')
-    niche = request.form.get('niche')
-    trend_keywords = request.form.get('trend_keywords')
+@app.route('/run-quick-launch', methods=['POST'])
+def run_quick_launch():
+    if not check_authorization(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    result = generate_quick_launch(data)
+    return jsonify(result)
 
-    html_output = generate_offer_blueprint(
-        user_path, client_type, audience_type,
-        emotion_summary, content_topics,
-        inquiry_summary, niche, trend_keywords
-    )
+@app.route('/run-swipe-copy', methods=['POST'])
+def run_swipe_copy():
+    if not check_authorization(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    result = generate_swipe_copy(data)
+    return jsonify(result)
 
-    output_path = f"static/blueprints/blueprint_{datetime.datetime.now().timestamp()}.pdf"
-    pdfkit.from_string(html_output, output_path)
+@app.route('/run-emotion-engine', methods=['POST'])
+def run_emotion_engine():
+    if not check_authorization(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    result = generate_emotion_report(data)
+    return jsonify(result)
 
-    return render_template("blueprint_result.html", html_output=html_output, pdf_url='/' + output_path)
+@app.route('/run-reddit-scanner', methods=['POST'])
+def run_reddit_scanner():
+    if not check_authorization(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    result = generate_reddit_report(data)
+    return jsonify(result)
 
-# === Offer Summary Intake Route for Tally/Make ===
-from offer_summary_generator import run_offer_summary as run_offer_summary_logic
+@app.route('/run-trendsync', methods=['POST'])
+def run_trendsync():
+    if not check_authorization(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    result = generate_trendsync_insights(data)
+    return jsonify(result)
 
-@app.route("/run-offer-summary", methods=["POST"])
-def offer_summary_webhook():
-    try:
-        data = request.json
-        email = data.get("email")
-        offer_title = data.get("offer_title")
-        offer_type = data.get("offer_type")
-        offer_description = data.get("offer_description")
+@app.route('/run-vip-bulk', methods=['POST'])
+def run_vip_bulk():
+    if not check_authorization(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    result = generate_vip_bulk_reports(data)
+    return jsonify(result)
 
-        if not all([email, offer_title, offer_type, offer_description]):
-            return jsonify({"error": "Missing fields"}), 400
+@app.route('/run-brand-tracker', methods=['POST'])
+def run_brand_tracker():
+    if not check_authorization(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    result = generate_monthly_pulse_report(data)
+    return jsonify(result)
 
-        run_offer_summary_logic(
-            title=offer_title,
-            offer_type=offer_type,
-            description=offer_description,
-            user_email=email
-        )
+@app.route('/register-affiliate', methods=['POST'])
+def register_affiliate_route():
+    if not check_authorization(request):
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json()
+    result = register_affiliate(data)
+    return jsonify(result)
 
-        return jsonify({"success": True, "message": "Offer summary created successfully!"})
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# === Run the Flask App ===
+# === Run App Locally for Testing ===
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
