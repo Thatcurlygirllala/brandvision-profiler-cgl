@@ -18,7 +18,7 @@ EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
 
 # === AI Strategy Generator ===
-def generate_income_blueprint(audience_description, user_strength="writing"):
+def create_audience_to_income(audience_description, user_strength="writing"):
     prompt = f"""
 You are a 19-star AI monetization strategist helping brands turn their audience into income.
 
@@ -43,7 +43,6 @@ Create an Audience-to-Income Blueprint:
 
 # === PDF Generator (with encoding fix) ===
 def create_income_pdf(content, audience_description):
-    # Clean problematic characters that Latin-1 (fpdf) can’t handle
     def clean_text(text):
         replacements = {
             "’": "'", "‘": "'", "“": '"', "”": '"',
@@ -93,7 +92,7 @@ def log_income_blueprint_to_airtable(user_email, audience_description):
     }
     data = {
         "fields": {
-            "User Email": user_email,  # <-- This is now correct
+            "User Email": user_email,
             "Report Type": "Audience-to-Income Blueprint",
             "Keyword": audience_description[:80],
             "Source": "Audience-to-Income Blueprint",
@@ -131,7 +130,7 @@ def send_email_with_attachment(to_email, subject, body, attachment_path):
 # === Run Everything ===
 def run_audience_to_income_blueprint(audience_description, user_strength="writing", user_email="demo@brandvision.com"):
     print(f"Generating 19-star Monetization Blueprint for: {audience_description}")
-    summary = generate_income_blueprint(audience_description, user_strength)
+    summary = create_audience_to_income(audience_description, user_strength)
     filename = create_income_pdf(summary, audience_description)
     log_income_blueprint_to_airtable(user_email, audience_description)
 
