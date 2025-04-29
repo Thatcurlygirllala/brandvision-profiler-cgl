@@ -29,7 +29,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/yalondalalalolar-johnson/brandvision-profiler-cgl/venv"
+set -gx VIRTUAL_ENV "/Users/yalondalalalolar-johnson/BrandVisionProfiler/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

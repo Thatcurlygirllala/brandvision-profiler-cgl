@@ -1,4 +1,4 @@
-#!/Users/yalondalalalolar-johnson/brandvision-profiler-cgl/venv/bin/python3
+#!/Users/yalondalalalolar-johnson/BrandVisionProfiler/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
