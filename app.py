@@ -1,4 +1,4 @@
-# === BrandVision Profiler - Final Launch Version app.py ===
+# === BrandVision Profiler - Final Launch Version app.py (Fixed) ===
 
 from flask import Flask, request, jsonify
 import os
@@ -27,7 +27,7 @@ from quick_launch_ai import generate_quick_launch
 from swipe_copy_generator import generate_swipe_copy
 from emotion_engine import generate_emotion_report
 from reddit_scanner_enhanced_19star import run_enhanced_reddit_scanner
-from trendsync_engine import generate_trendsync_insights
+from trendsync_engine import run_trend_insights
 from vip_bulk_report import generate_vip_bulk_reports
 from brand_tracker import generate_monthly_pulse_report
 from affiliate_tracking import register_affiliate
@@ -35,7 +35,7 @@ from affiliate_tracking import register_affiliate
 # === App Routes ===
 
 @app.route('/run-offer-summary', methods=['POST'])
-def run_offer_summary():
+def run_offer_summary_route():
     if not check_authorization(request):
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
@@ -43,7 +43,7 @@ def run_offer_summary():
     return jsonify(result)
 
 @app.route('/run-audience-blueprint', methods=['POST'])
-def run_audience_blueprint():
+def run_audience_blueprint_route():
     if not check_authorization(request):
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
@@ -51,7 +51,7 @@ def run_audience_blueprint():
     return jsonify(result)
 
 @app.route('/run-quick-launch', methods=['POST'])
-def run_quick_launch():
+def run_quick_launch_route():
     if not check_authorization(request):
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
@@ -59,7 +59,7 @@ def run_quick_launch():
     return jsonify(result)
 
 @app.route('/run-swipe-copy', methods=['POST'])
-def run_swipe_copy():
+def run_swipe_copy_route():
     if not check_authorization(request):
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
@@ -67,7 +67,7 @@ def run_swipe_copy():
     return jsonify(result)
 
 @app.route('/run-emotion-engine', methods=['POST'])
-def run_emotion_engine():
+def run_emotion_engine_route():
     if not check_authorization(request):
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
@@ -75,16 +75,13 @@ def run_emotion_engine():
     return jsonify(result)
 
 @app.route('/run-reddit-scanner', methods=['POST'])
-def run_reddit_scanner():
+def run_reddit_scanner_route():
     if not check_authorization(request):
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
-
     keyword = data.get("keyword", "default keyword")
     user_email = data.get("user_email", "demo@brandvision.com")
-
     run_enhanced_reddit_scanner(keyword, user_email)
-
     return jsonify({
         "status": "success",
         "message": f"Enhanced Reddit Scanner completed for keyword: {keyword}",
@@ -92,15 +89,19 @@ def run_reddit_scanner():
     })
 
 @app.route('/run-trendsync', methods=['POST'])
-def run_trendsync():
+def run_trendsync_route():
     if not check_authorization(request):
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
-    result = generate_trendsync_insights(data)
-    return jsonify(result)
+    keyword = data.get("keyword", "default keyword")
+    run_trend_insights(keyword)
+    return jsonify({
+        "status": "success",
+        "message": f"TrendSync insights report generated for keyword: {keyword}"
+    })
 
 @app.route('/run-vip-bulk', methods=['POST'])
-def run_vip_bulk():
+def run_vip_bulk_route():
     if not check_authorization(request):
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
@@ -108,7 +109,7 @@ def run_vip_bulk():
     return jsonify(result)
 
 @app.route('/run-brand-tracker', methods=['POST'])
-def run_brand_tracker():
+def run_brand_tracker_route():
     if not check_authorization(request):
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
