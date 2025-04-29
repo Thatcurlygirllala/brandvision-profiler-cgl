@@ -26,7 +26,7 @@ from audience_to_income import create_audience_to_income
 from quick_launch_ai import generate_quick_launch
 from swipe_copy_generator import generate_swipe_copy
 from emotion_engine import generate_emotion_report
-from reddit_scanner import generate_reddit_report
+from reddit_scanner_enhanced_19star import run_enhanced_reddit_scanner
 from trendsync_engine import generate_trendsync_insights
 from vip_bulk_report import generate_vip_bulk_reports
 from brand_tracker import generate_monthly_pulse_report
@@ -79,8 +79,17 @@ def run_reddit_scanner():
     if not check_authorization(request):
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
-    result = generate_reddit_report(data)
-    return jsonify(result)
+
+    keyword = data.get("keyword", "default keyword")
+    user_email = data.get("user_email", "demo@brandvision.com")
+
+    run_enhanced_reddit_scanner(keyword, user_email)
+
+    return jsonify({
+        "status": "success",
+        "message": f"Enhanced Reddit Scanner completed for keyword: {keyword}",
+        "user_email": user_email
+    })
 
 @app.route('/run-trendsync', methods=['POST'])
 def run_trendsync():
