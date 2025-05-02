@@ -3,18 +3,20 @@ import openai
 from datetime import datetime
 from dotenv import load_dotenv
 from fpdf import FPDF
-from transformers import pipeline
 
 # Load environment variables
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Load emotion classifier model
-emotion_clf = pipeline("text-classification", model="SamLowe/roberta-base-go_emotions", top_k=5)
-
 def analyze_emotional_tone(text):
-    results = emotion_clf(text)
-    return ", ".join([f"{res['label']} ({round(res['score'], 2)})" for res in results[0]])
+    try:
+        from transformers import pipeline
+        emotion_clf = pipeline("text-classification", model="SamLowe/roberta-base-go_emotions", top_k=5)
+        results = emotion_clf(text)
+        return ", ".join([f"{res['label']} ({round(res['score'], 2)})" for res in results[0]])
+    except Exception as e:
+        print(f"Emotion analysis failed: {e}")
+        return "Emotion classifier not available (transformers/torch not installed)."
 
 def generate_trend_insights(keyword, platform="multi"):
     prompt = f"""
@@ -51,7 +53,6 @@ def create_trend_insight_pdf(keyword, insights, emotion_result):
     pdf.set_font("Arial", "I", 12)
     pdf.cell(200, 10, f"Trend: {keyword} | {datetime.now().strftime('%Y-%m-%d')}", ln=True, align="C")
     pdf.ln(5)
-
     pdf.set_font("Arial", "B", 12)
     pdf.cell(0, 10, "Detected Emotional Tones:", ln=True)
     pdf.set_font("Arial", "", 12)
@@ -81,7 +82,8 @@ def create_trend_insight_pdf(keyword, insights, emotion_result):
     return filename
 
 def generate_trendsync_insights(keyword, platform="multi"):
-    ai_insights = generate_trend_insights(keyword, platform)
-    emotion_result = analyze_emotional_tone(ai_insights)
-    filename = create_trend_insight_pdf(keyword, ai_insights, emotion_result)
+    insights = generate_trend_insights(keyword, platform)
+    emotion_result = analyze_emotional_tone(insights)
+    filename = create_trend_insight_pdf(keyword, insights, emotion_result)
     print(f"✅ TrendSync Insight PDF saved: {filename}")
+    return filename
