@@ -4,14 +4,19 @@ from datetime import datetime
 from fpdf import FPDF
 import openai
 from airtable_connector import save_to_airtable
-from transformers import pipeline
 
 # Load environment variables
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Load emotion classifier
-emotion_clf = pipeline("text-classification", model="SamLowe/roberta-base-go_emotions", top_k=5)
+# === Emotion Classifier Check ===
+try:
+    from transformers import pipeline
+    emotion_clf = pipeline("text-classification", model="SamLowe/roberta-base-go_emotions", top_k=5)
+    HAS_EMOTION_LIBS = True
+except Exception:
+    emotion_clf = None
+    HAS_EMOTION_LIBS = False
 
 # === MOCKED TWEETS FUNCTION (Replace with API when live) ===
 def fetch_tweets(keyword, limit=100):
@@ -23,11 +28,40 @@ def fetch_tweets(keyword, limit=100):
         f"Why does {keyword} sound like a scam?"
     ]
 
-# === ADVANCED EMOTION CLASSIFIER ===
-def classify_emotions_ai(tweets):
+# === ROBERTA CLASSIFIER ===
+def classify_emotions_roberta(tweets):
     combined_text = " ".join(tweets)
     result = emotion_clf(combined_text)
     return ", ".join([f"{r['label']} ({round(r['score'], 2)})" for r in result[0]])
+
+# === GPT-4 FALLBACK EMOTION ANALYSIS ===
+def classify_emotions_gpt(tweets):
+    combined_text = " ".join(tweets)
+    prompt = f"""
+You are an emotional intelligence expert.
+
+Analyze the emotional tone of the following consumer posts:
+\"{combined_text}\"
+
+List the top 3 emotions with explanations.
+"""
+    try:
+        client = openai.OpenAI()
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"[GPT-4 Fallback Error] {e}"
+
+# === SMART EMOTION ANALYSIS WRAPPER ===
+def classify_emotions_ai(tweets):
+    if HAS_EMOTION_LIBS:
+        return classify_emotions_roberta(tweets)
+    else:
+        return classify_emotions_gpt(tweets)
 
 # === AI INSIGHT GENERATOR ===
 def generate_emotion_report(emotion_summary, keyword):
