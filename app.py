@@ -25,10 +25,10 @@ from offer_summary import generate_offer_summary
 from audience_to_income import create_audience_to_income
 from quick_launch_ai import generate_quick_launch
 from swipe_copy_generator import generate_swipe_copy
-from emotion_engine import analyze_emotional_tone  # Updated
+from emotion_engine import analyze_emotional_tone
 from reddit_scanner_enhanced_19star import run_enhanced_reddit_scanner
 from trendsync_engine import generate_trend_insights
-from vip_bulk_report import generate_vip_bulk_reports
+from vip_bulk_launcher import run_vip_bulk_launcher as generate_vip_bulk_reports  # FIXED
 from brand_tracker import generate_monthly_pulse_report
 from affiliate_tracking import register_affiliate
 
@@ -72,7 +72,7 @@ def run_emotion_engine_route():
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
     input_text = data.get("text", "")
-    result = analyze_emotional_tone(input_text)  # Updated logic
+    result = analyze_emotional_tone(input_text)
     return jsonify({
         "status": "success",
         "emotional_analysis": result
@@ -112,8 +112,14 @@ def run_vip_bulk_route():
     if not check_authorization(request):
         return jsonify({"error": "Unauthorized"}), 401
     data = request.get_json()
-    result = generate_vip_bulk_reports(data)
-    return jsonify(result)
+    client_name = data.get("client_name", "")
+    industry = data.get("industry", "")
+    goals = data.get("goals", "")
+    generate_vip_bulk_reports(client_name, industry, goals)
+    return jsonify({
+        "status": "success",
+        "message": f"VIP Report generated for {client_name}"
+    })
 
 @app.route('/run-brand-tracker', methods=['POST'])
 def run_brand_tracker_route():
